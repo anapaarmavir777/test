@@ -1,26 +1,26 @@
 <template>
    <v-list>
     <v-list-item v-on:click="govs" v-for="gov in govs">
+        123 <br>
         {{ gov.gov }} <br>
         {{ gov.data }}
     </v-list-item>
    </v-list>
 </template>
 <script>
+let gov = 8;
+let n = 5;
+let data = 6;
+let idgov = 7;
 export default {
     name: 'EvaGovNumber',
     data(){
-        return {
-            govs: [{gov: 1, dt: 2, id: 3}]
+        return { 
+            govs: [{gov:(n), dt:(data), id:(idgov)}]
         };
     },
     created(){
         this.govs = JSON.parse(gov)
-        // var ViewItem = [ "1" ];
-        // var serialView = JSON.stringify(ViewItem);
-        // localStorage.setItem("ViewItem1", serialView);
-        // var returnView = JSON.parse(ViewItem);
-        // this.govs=localStorage.getItem('evaGovNum');
     },
     methods:{
         go(gov){
@@ -31,5 +31,5 @@ export default {
             this.$emit('go',gov)
         }
     }
-    
 }
+</script>
