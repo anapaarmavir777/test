@@ -93,23 +93,8 @@
                    :loading="mode === MODES.loading">
                 <v-icon small>mdi-tow-truck</v-icon>&nbsp;выбрать
             </v-btn>
-        </v-form> 
-     <v-card
-     flat
-     tile
-     class="eva-gos-number">
-     <v-card-text>
-        <eva-gov-list v-on:click="" />
-
-     </v-card-text>
-
-    </v-card>
-    <v-card-actions v-if="(has('all1') && (all.length > PAGE_SIZE) && !has('search1') )">
-            <v-pagination v-model="page" 
-                          :length="((all.length / PAGE_SIZE) | 0) + 1"
-                          v-on:input="onpage">
-            </v-pagination>
-        </v-card-actions>
+        </v-form>
+        <eva-gov-list/>
  </div>
 </template>
 <!-- <template>
@@ -231,12 +216,6 @@ export default {
             }
             return false;
         },
-        qwe123(){ 
-        var ViewItem = [ evacs[n].govnum ];
-        var serialView = JSON.stringify(ViewItem);
-        localStorage.setItem("ViewItem1", serialView);
-        console.log("ViewItem1", ViewItem);
-      },
         async usevehicle(e){
             this.error = null;
             try {
