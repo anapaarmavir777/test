@@ -1,35 +1,47 @@
 <template>
-   <v-list>
-    <v-list-item v-on:click="govs" v-for="gov in govs">
-        123 <br>
-        {{ gov.gov }} <br>
-        {{ gov.data }}
+   <v-list >
+    <v-list-item v-on:click="go" v-for="gov in govs">
+        {{ gov.govnum }} <br>
+        {{ gov.dt }} <br>
+        {{ gov.id }}
     </v-list-item>
    </v-list>
 </template>
 <script>
-let gov = 8;
-let n = 5;
-let data = 6;
-let idgov = 7;
+
+const _LS_KEY = 'saved-govs';
+
 export default {
-    name: 'EvaGovNumber',
+    name: 'EvaGovList',
     data(){
+        const govs = [{
+            govnum: 1,
+            dt: new Date(),
+            id: 10000   
+        }];
+
+
         return { 
-            govs: [{gov:(n), dt:(data), id:(idgov)}]
+            govs
         };
     },
+
     created(){
-        this.govs = JSON.parse(gov)
+        this.govs = JSON.parse(localStorage.getItem(_LS_KEY)) || [];
     },
+
     methods:{
         go(gov){
-            localStorage.setItem('GovNum', JSON.stringify(govs))
             gov.dt = new Date();
-            console.log(gov.dt);
-            JSON.setItem('govs', JSON.stringify(this.govs))
-            this.$emit('go',gov)
+            localStorage.setItem('govs', JSON.stringify(this.govs))
+            this.$emit('go', gov);
+        },
+        
+        save(gov){
+            gov.dt = new Date();
+            this.govs.push(gov);
+            localStorage.setItem(_LS_KEY, JSON.stringify(this.govs));
         }
-    }
+    },
 }
 </script>
