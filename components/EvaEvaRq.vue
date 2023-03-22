@@ -94,32 +94,9 @@
                 <v-icon small>mdi-tow-truck</v-icon>&nbsp;выбрать
             </v-btn>
         </v-form>
-        <eva-gov-list/>
- </div>
-</template>
-<!-- <template>
-    <div class="eva-vehicle1">
-        <v-form v-on:submit.stop.prevent="usevehicle">
-            <v-text-field
-                label="гос.знак123"
-                clearable
-                autofocus
-                style="margin: 100,20,20,200;"
-                :messages="['введите гос.знак эвакуатора, например: к345хе123']"
-                :error="has('error')"
-                :error-messages="errm"
-                :success="has('evacuator')"
-                v-model="gov"></v-text-field>
-            <v-btn color="primary" tile
-                   class="my-5"
-                   type="submit"
-                   :loading="mode === MODES.loading">
-                <v-icon small>mdi-tow-truck</v-icon>&nbsp;выбрать
-            </v-btn>
-        </v-form> 
-           
+        <eva-gov-list ref="EvaGovList" v-on:go ="uselocal"/>
     </div>
-</template> -->
+</template>
 
 <script>
 import { mapState } from 'vuex';
@@ -232,8 +209,10 @@ export default {
                 }
                 this.$store.commit("profile/set", {evacuator: evacs[n]});
                 this.$store.commit("settings/setSaved", {evaGovNum: evacs[n].govnum});
+                this.$refs["EvaGovList"].save(evacs[n]); 
+                
                 setTimeout(()=>{
-                    $nuxt.$children.forEach( c => c.$forceUpdate() );   //TODO: in other page
+                    $nuxt.$children.forEach( c => c.$forceUpdate() ); //TODO: in other page
                     this.getrq();
                 }, 300);
             } catch(e){
@@ -247,6 +226,28 @@ export default {
             
             return false;
         },  //usevehicle
+        async uselocal(gov){
+            this.error = null;
+            try {
+                await this.$store.dispatch("data/read", "evacs");
+                const evacs = this.$store.state.data.evacs;
+                const n = evacs.findIndex( e => reGov.test(e.govnum));
+                if ( n < 0 ){
+                    throw {message: `Гос.знак "${ this.gov }" не найден в списке эвакуаторов`};
+                }
+                this.$store.commit("profile/set", {evacuator: evacs[n]});
+                this.$store.commit("settings/setSaved", {evaGovNum: evacs[n].govnum});
+                this.$refs["EvaGovList"].save(evacs[n]);
+                
+                setTimeout(()=>{
+                    $nuxt.$children.forEach( c => c.$forceUpdate() );   //TODO: in other page
+                    this.getrq();
+                }, 300);
+
+            } catch(e) {
+                
+            }
+        },
         _normalize(rq){
             rq.at = $moment(rq.createdt).format('DD.MM.YYYY HH:mm');
             var n = this.statuses?.findIndex( s => rq.stateid === s.id );
@@ -383,17 +384,7 @@ export default {
         reload(){
             this.getrq(this.rq?.id);
         }
-        // govnumber777() {
-        //     this.$store.commit("number777" , {evaGovNum: evacs[n].govnum}); 
-        //     this.$forceUpdate();
-        // }
     }
-    // mounted() {
-    //     if (localStorage.number777) {
-    //         this.number777 = localStorage.number777
-    //     }
-    // }
-    
 }    
 </script>
 <style lang="scss">
