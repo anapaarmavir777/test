@@ -8,7 +8,12 @@ export const state = () => ({
     },
     env: undefined,
     quality: -1,
-    saved: {}
+    saved: {},
+    govs : [{
+        govnum: 1,
+        dt: new Date(),
+        id: 10000   
+    }]
 });
 
 export const mutations = {
@@ -26,6 +31,12 @@ export const mutations = {
             const s = window.localStorage.getItem(_LS_SETTS_KEY);
             if ( (s) && /^\{+/.test(s) ){
                 state.saved = JSON.parse(s);
+                state.saved.govs = state.saved.govs?.map ( g => {
+                g.dt = moment(g.dt);
+                return g;
+            }) .sort( (g1, g2) => {
+                return g2.dt.isBefore(g1.dt) ? -1 : 1;
+            } ) || [];
             }
         } catch(e){
             console.log('ERR (ls-read saved)', e);
@@ -38,7 +49,8 @@ export const mutations = {
         });
         state.saved = stt;
         window.localStorage.setItem(_LS_SETTS_KEY, JSON.stringify(stt));
-    }   //setSaved
+    },  //setSaved
+
 };  //mutations 
 
 export const actions = {
@@ -94,7 +106,7 @@ export const actions = {
                 console.log('PUSH.onUnregisterError', err);
             });
         }
-    }
+    },
 };
 
 export const getters = {
@@ -104,5 +116,8 @@ export const getters = {
     get: state => q =>{
         var res = state.env[q];
         return res;        
+    },
+    govs: state =>{ 
+        return state.saved.govs;
     }
 };
